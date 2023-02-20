@@ -15,6 +15,11 @@ class Searchbar extends Component {
 
   submitHandler = event => {
     event.preventDefault();
+    if (!this.state.filter.trim()) {
+      console.log('Ничего нет!'); //  Сделать нотификашку
+      return;
+    }
+
     this.props.onSubmit(this.state.filter);
     this.reset();
   };

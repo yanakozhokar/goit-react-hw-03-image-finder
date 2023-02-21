@@ -44,7 +44,11 @@ class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.getFilter} />
-        {this.state.images != [] && <ImageGallery images={this.state.images} />}
+        <main>
+          {this.state.images.length !== 0 && (
+            <ImageGallery images={this.state.images} />
+          )}
+        </main>
       </>
     );
   }

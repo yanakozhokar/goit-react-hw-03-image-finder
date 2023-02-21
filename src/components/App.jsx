@@ -17,7 +17,7 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.filter !== this.state.filter) {
-      setTimeout(this.fetchImages(), 2000);
+      setTimeout(this.fetchImages, 2000);
       this.increasePage();
     }
   }
@@ -31,7 +31,7 @@ class App extends Component {
   };
 
   loadMoreHandler = () => {
-    setTimeout(this.fetchImages(), 2000);
+    setTimeout(this.fetchImages, 2000);
     this.increasePage();
   };
 
@@ -86,7 +86,7 @@ class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.filterHandler} />
-        {!images && loading && <Loader />}
+        {images.length != 0 && loading && <Loader />}
 
         {status === 'resolved' && (
           <>

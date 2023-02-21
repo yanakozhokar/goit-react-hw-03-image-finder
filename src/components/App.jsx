@@ -86,12 +86,12 @@ class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.filterHandler} />
-        {loading && <Loader />}
+        {!images && loading && <Loader />}
 
         {status === 'resolved' && (
           <>
             <ImageGallery images={this.state.images} />
-            <Button loadMore={this.loadMoreHandler} />
+            {loading ? <Loader /> : <Button loadMore={this.loadMoreHandler} />}
           </>
         )}
 

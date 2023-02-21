@@ -17,6 +17,7 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.filter !== this.state.filter) {
+      this.setLoader();
       setTimeout(this.fetchImages, 2000);
       this.increasePage();
     }
@@ -31,6 +32,7 @@ class App extends Component {
   };
 
   loadMoreHandler = () => {
+    this.setLoader();
     setTimeout(this.fetchImages, 2000);
     this.increasePage();
   };
@@ -38,10 +40,6 @@ class App extends Component {
   fetchImages = () => {
     const BASE_URL = 'https://pixabay.com/api/';
     const KEY = '32921127-0509bb2923ebc5e2476cd7059';
-
-    this.setState({
-      loading: true,
-    });
 
     fetch(
       `${BASE_URL}?q=${this.state.filter}&key=${KEY}&image_type=photo&orientation=horizontal&page=${this.state.page}&per_page=${this.state.per_page}`
@@ -80,22 +78,35 @@ class App extends Component {
     }));
   };
 
+  setLoader = () => {
+    this.setState({
+      loading: true,
+    });
+  };
+
   render() {
     const { images, status, loading, error } = this.state;
 
     return (
       <>
         <Searchbar onSubmit={this.filterHandler} />
-        {images.length != 0 && loading && <Loader />}
 
-        {status === 'resolved' && (
-          <>
-            <ImageGallery images={this.state.images} />
-            {loading ? <Loader /> : <Button loadMore={this.loadMoreHandler} />}
-          </>
-        )}
+        <main>
+          {images.length != 0 && loading && <Loader />}
 
-        {status === 'rejected' && <p className="notFound">{error.message}</p>}
+          {status === 'resolved' && (
+            <>
+              <ImageGallery images={this.state.images} />
+              {loading ? (
+                <Loader />
+              ) : (
+                <Button loadMore={this.loadMoreHandler} />
+              )}
+            </>
+          )}
+
+          {status === 'rejected' && <p className="notFound">{error.message}</p>}
+        </main>
       </>
     );
   }

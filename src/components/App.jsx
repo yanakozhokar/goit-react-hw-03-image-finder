@@ -9,6 +9,8 @@ class App extends Component {
     images: [],
     page: 1,
     per_page: 12,
+    status: 'idle',
+    error: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -19,9 +21,10 @@ class App extends Component {
   }
 
   filterHandler = newFilter => {
-    this.resetImages();
     this.setState({
       filter: newFilter,
+      images: [],
+      page: 1,
     });
   };
 
@@ -38,6 +41,11 @@ class App extends Component {
       `${BASE_URL}?q=${this.state.filter}&key=${KEY}&image_type=photo&orientation=horizontal&page=${this.state.page}&per_page=${this.state.per_page}`
     )
       .then(data => data.json())
+      .then(response =>
+        response.hits.length !== 0
+          ? Promise.resolve(response)
+          : Promise.reject(new Error('No such images found'))
+      )
       .then(response => {
         const newImages = response.hits.map(
           ({ id, webformatURL, largeImageURL }) => ({
@@ -46,9 +54,15 @@ class App extends Component {
             largeImageURL,
           })
         );
-
         this.setState({
           images: [...this.state.images, ...newImages],
+          status: 'resolved',
+        });
+      })
+      .catch(error => {
+        this.setState({
+          error,
+          status: 'rejected',
         });
       });
   };
@@ -59,23 +73,23 @@ class App extends Component {
     }));
   };
 
-  resetImages = () => {
-    this.setState({
-      images: [],
-    });
-  };
-
   render() {
+    const { status, error } = this.state;
+
     return (
       <>
         <Searchbar onSubmit={this.filterHandler} />
         <main>
-          {this.state.images.length !== 0 && (
+          {status === 'pending' && <p className="downloading">Загружаем</p>}
+
+          {status === 'resolved' && (
             <>
               <ImageGallery images={this.state.images} />
               <Button loadMore={this.loadMoreHandler} />
             </>
           )}
+
+          {status === 'rejected' && <p className="notFound">{error.message}</p>}
         </main>
       </>
     );

@@ -81,7 +81,7 @@ class App extends Component {
   };
 
   render() {
-    const { status, loading, error } = this.state;
+    const { images, status, loading, error } = this.state;
 
     return (
       <>

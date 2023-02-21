@@ -17,7 +17,7 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.filter !== this.state.filter) {
-      this.fetchImages();
+      setTimeout(this.fetchImages(), 2000);
       this.increasePage();
     }
   }
@@ -31,7 +31,7 @@ class App extends Component {
   };
 
   loadMoreHandler = () => {
-    this.fetchImages();
+    setTimeout(this.fetchImages(), 2000);
     this.increasePage();
   };
 
@@ -86,11 +86,13 @@ class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.filterHandler} />
+        {loading && <Loader />}
+
         {status === 'resolved' && (
-          <main>
+          <>
             <ImageGallery images={this.state.images} />
-            {loading ? <Loader /> : <Button loadMore={this.loadMoreHandler} />}
-          </main>
+            <Button loadMore={this.loadMoreHandler} />
+          </>
         )}
 
         {status === 'rejected' && <p className="notFound">{error.message}</p>}

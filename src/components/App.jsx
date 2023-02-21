@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
+import Loader from './Loader/Loader';
 
 class App extends Component {
   state = {
@@ -10,6 +11,7 @@ class App extends Component {
     page: 1,
     per_page: 12,
     status: 'idle',
+    loading: false,
     error: '',
   };
 
@@ -36,6 +38,10 @@ class App extends Component {
   fetchImages = () => {
     const BASE_URL = 'https://pixabay.com/api/';
     const KEY = '32921127-0509bb2923ebc5e2476cd7059';
+
+    this.setState({
+      loading: true,
+    });
 
     fetch(
       `${BASE_URL}?q=${this.state.filter}&key=${KEY}&image_type=photo&orientation=horizontal&page=${this.state.page}&per_page=${this.state.per_page}`
@@ -64,7 +70,8 @@ class App extends Component {
           error,
           status: 'rejected',
         });
-      });
+      })
+      .finally(this.setState({ loading: false }));
   };
 
   increasePage = () => {
@@ -74,23 +81,19 @@ class App extends Component {
   };
 
   render() {
-    const { status, error } = this.state;
+    const { status, loading, error } = this.state;
 
     return (
       <>
         <Searchbar onSubmit={this.filterHandler} />
-        <main>
-          {status === 'pending' && <p className="downloading">Загружаем</p>}
+        {status === 'resolved' && (
+          <main>
+            <ImageGallery images={this.state.images} />
+            {loading ? <Loader /> : <Button loadMore={this.loadMoreHandler} />}
+          </main>
+        )}
 
-          {status === 'resolved' && (
-            <>
-              <ImageGallery images={this.state.images} />
-              <Button loadMore={this.loadMoreHandler} />
-            </>
-          )}
-
-          {status === 'rejected' && <p className="notFound">{error.message}</p>}
-        </main>
+        {status === 'rejected' && <p className="notFound">{error.message}</p>}
       </>
     );
   }

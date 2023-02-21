@@ -22,6 +22,12 @@ img {
   height: auto;
 }
 
+.pendingIconContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .App {
   display: grid;
   grid-template-columns: 1fr;
@@ -34,6 +40,8 @@ img {
   font-weight: 600;
   text-align: center;
 }
+
+
 
 /*
  * Стили компонента ImageGallery

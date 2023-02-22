@@ -113,7 +113,6 @@ class App extends Component {
     if (event.code === 'Escape') {
       this.setState({ modal: false });
     }
-    console.log('Нажали Escape');
   };
 
   render() {

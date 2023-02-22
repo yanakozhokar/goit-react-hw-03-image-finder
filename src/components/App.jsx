@@ -3,6 +3,7 @@ import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
 
 class App extends Component {
   state = {
@@ -11,8 +12,10 @@ class App extends Component {
     page: 1,
     per_page: 12,
     status: 'idle',
-    loading: false,
     error: '',
+    loading: false,
+    modal: false,
+    largeImageURL: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -20,6 +23,7 @@ class App extends Component {
       this.setState({
         status: 'pending',
       });
+      this.increasePage();
       this.setLoader();
       this.fetchImages();
     }
@@ -86,8 +90,21 @@ class App extends Component {
     });
   };
 
+  openModal = largeImageURL => {
+    this.setState({
+      modal: true,
+      largeImageURL,
+    });
+  };
+
+  closeModal = event => {
+    if (event.currentTarget === event.target) {
+      this.setState({ modal: false });
+    }
+  };
+
   render() {
-    const { status, loading, error } = this.state;
+    const { status, loading, error, modal } = this.state;
 
     return (
       <>
@@ -95,19 +112,26 @@ class App extends Component {
 
         <main>
           {status === 'pending' && loading && <Loader />}
-
           {status === 'resolved' && (
-            <>
-              <ImageGallery images={this.state.images} />
+            <div>
+              <ImageGallery
+                images={this.state.images}
+                openModal={this.openModal}
+              />
               {loading ? (
                 <Loader />
               ) : (
                 <Button loadMore={this.loadMoreHandler} />
               )}
-            </>
+            </div>
           )}
-
           {status === 'rejected' && <p className="notFound">{error.message}</p>}
+          {modal && (
+            <Modal
+              largeImageURL={this.state.largeImageURL}
+              closeModal={this.closeModal}
+            />
+          )}
         </main>
       </>
     );

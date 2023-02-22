@@ -27,6 +27,12 @@ class App extends Component {
       this.setLoader();
       this.fetchImages();
     }
+    if (this.state.modal) {
+      window.addEventListener('keydown', this.keyDownCloseModal);
+    }
+    if (!this.state.modal) {
+      window.removeEventListener('keydown', this.keyDownCloseModal);
+    }
   }
 
   filterHandler = newFilter => {
@@ -101,6 +107,13 @@ class App extends Component {
     if (event.currentTarget === event.target) {
       this.setState({ modal: false });
     }
+  };
+
+  keyDownCloseModal = event => {
+    if (event.code === 'Escape') {
+      this.setState({ modal: false });
+    }
+    console.log('Нажали Escape');
   };
 
   render() {

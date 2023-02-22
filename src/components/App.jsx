@@ -17,9 +17,11 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.filter !== this.state.filter) {
+      this.setState({
+        status: 'pending',
+      });
       this.setLoader();
-      setTimeout(this.fetchImages, 2000);
-      this.increasePage();
+      this.fetchImages();
     }
   }
 
@@ -32,9 +34,9 @@ class App extends Component {
   };
 
   loadMoreHandler = () => {
-    this.setLoader();
-    setTimeout(this.fetchImages, 2000);
     this.increasePage();
+    this.setLoader();
+    this.fetchImages();
   };
 
   fetchImages = () => {
@@ -85,14 +87,14 @@ class App extends Component {
   };
 
   render() {
-    const { images, status, loading, error } = this.state;
+    const { images, status, loading, error, page } = this.state;
 
     return (
       <>
         <Searchbar onSubmit={this.filterHandler} />
 
         <main>
-          {images.length != 0 && loading && <Loader />}
+          {status === 'pending' && loading && <Loader />}
 
           {status === 'resolved' && (
             <>

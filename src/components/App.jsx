@@ -28,10 +28,10 @@ class App extends Component {
       this.fetchImages();
     }
     if (this.state.modal) {
-      window.addEventListener('keydown', this.keyDownCloseModal);
+      window.addEventListener('keydown', this.onKeydownCloseModal);
     }
     if (!this.state.modal) {
-      window.removeEventListener('keydown', this.keyDownCloseModal);
+      window.removeEventListener('keydown', this.onKeydownCloseModal);
     }
   }
 
@@ -103,13 +103,13 @@ class App extends Component {
     });
   };
 
-  closeModal = event => {
+  onClickCloseModal = event => {
     if (event.currentTarget === event.target) {
       this.setState({ modal: false });
     }
   };
 
-  keyDownCloseModal = event => {
+  onKeydownCloseModal = event => {
     if (event.code === 'Escape') {
       this.setState({ modal: false });
     }
@@ -142,7 +142,7 @@ class App extends Component {
           {modal && (
             <Modal
               largeImageURL={this.state.largeImageURL}
-              closeModal={this.closeModal}
+              onClickCloseModal={this.onClickCloseModal}
             />
           )}
         </main>

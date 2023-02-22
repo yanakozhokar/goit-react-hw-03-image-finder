@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ImSearch } from 'react-icons/im';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import css from './Searchbar.module.css';
 
 class Searchbar extends Component {
@@ -17,7 +18,7 @@ class Searchbar extends Component {
   submitHandler = event => {
     event.preventDefault();
     if (!this.state.filter.trim()) {
-      console.log('Ничего нет!'); //  Сделать нотификашку
+      Notify.failure('Fill in the input line');
       return;
     }
 

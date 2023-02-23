@@ -29,7 +29,7 @@ class App extends Component {
         loading: true,
       });
 
-      fetchImages()
+      fetchImages(this.state.filter)
         .then(response =>
           response.hits.length !== 0
             ? Promise.resolve(response)

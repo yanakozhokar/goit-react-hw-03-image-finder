@@ -4,7 +4,13 @@ const fetchImages = (filter, page, per_page) => {
 
   return fetch(
     `${BASE_URL}?q=${filter}&key=${KEY}&image_type=photo&orientation=horizontal&page=${page}&per_page=${per_page}`
-  ).then(data => data.json());
+  )
+    .then(data => data.json())
+    .then(response =>
+      response.hits.length !== 0
+        ? Promise.resolve(response)
+        : Promise.reject(new Error('No such images found'))
+    );
 };
 
 export default fetchImages;

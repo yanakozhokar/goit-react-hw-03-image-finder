@@ -30,11 +30,6 @@ class App extends Component {
       });
 
       fetchImages(this.state.filter, this.state.page, this.state.per_page)
-        .then(response =>
-          response.hits.length !== 0
-            ? Promise.resolve(response)
-            : Promise.reject(new Error('No such images found'))
-        )
         .then(response => {
           const newImages = response.hits.map(
             ({ id, webformatURL, largeImageURL }) => ({
@@ -80,20 +75,14 @@ class App extends Component {
     });
   };
 
-  onClickCloseModal = event => {
-    if (event.currentTarget === event.target) {
-      this.setState({ modal: false });
-    }
-  };
-
-  onKeydownCloseModal = event => {
-    if (event.code === 'Escape') {
-      this.setState({ modal: false });
-    }
+  closeModal = () => {
+    this.setState({
+      modal: false,
+    });
   };
 
   render() {
-    const { status, loading, error, modal, total, page, per_page } = this.state;
+    const { status, loading, error, modal, page } = this.state;
 
     return (
       <>
@@ -107,9 +96,11 @@ class App extends Component {
                 openModal={this.openModal}
               />
               {page !== 1 && loading && <Loader />}
-              {!loading && total > per_page && (
-                <Button loadMore={this.loadMoreHandler} />
-              )}
+              {!loading &&
+                this.state.page <
+                  Math.ceil(this.state.total / this.state.per_page) && (
+                  <Button loadMore={this.loadMoreHandler} />
+                )}
             </div>
           )}
           {status === 'rejected' && !loading && (
@@ -118,8 +109,7 @@ class App extends Component {
           {modal && (
             <Modal
               largeImageURL={this.state.largeImageURL}
-              onClickCloseModal={this.onClickCloseModal}
-              onKeydownCloseModal={this.onKeydownCloseModal}
+              closeModal={this.closeModal}
             />
           )}
         </main>
